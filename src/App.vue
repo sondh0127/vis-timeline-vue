@@ -1,147 +1,97 @@
 <script setup lang="ts">
+import type { DataGroup, DataItem, TimelineOptions } from 'vis-timeline/esnext'
+import type { SvelteComponent } from 'svelte'
 import Timeline from './components/Timeline.vue'
+import EventTooltip from './components/EventTooltip.vue'
+import EventItem from './components/EventItem.svelte'
 
-const timelineWithoutGroupsEvents = ref('')
-const timelineEvents = ref('')
+const timeline = ref()
 
-const timeline = ref({
-  groups: [
-    {
-      id: 0,
-      content: 'Group 1',
+const groups = useStorage<DataGroup[]>('__GROUPS__', [
+  {
+    id: 0,
+    content: 'Group 1',
+  },
+])
+
+const items = useStorage<DataItem[]>('__ITEMS__', [])
+window.$apps = new Map<string, SvelteComponent>()
+
+const options = ref<TimelineOptions>({
+  editable: true,
+  zoomKey: 'ctrlKey',
+  align: 'center',
+  horizontalScroll: true,
+  zoomMin: 1000 * 60 * 60,
+  zoomMax: 1000 * 60 * 60 * 24,
+  itemsAlwaysDraggable: true,
+  showCurrentTime: true,
+  orientation: 'top',
+  minHeight: '150px',
+  maxHeight: '300px',
+  rollingMode: {
+    follow: true,
+    offset: 0.5,
+  },
+  template: (item, element, data) => {
+    let containerEl = document.getElementById(item.id)
+    if (containerEl) {
+      window.$apps.get(item.id)?.$destroy()
+    }
+    else {
+      containerEl = document.createElement('div')
+      containerEl.id = item.id
+    }
+
+    window.$apps.set(item.id, new EventItem({
+      target: containerEl,
+      props: { item },
+    }))
+
+    return containerEl
+  },
+  tooltipOnItemUpdateTime: {
+    template(item) {
+      let containerEl = document.getElementById(`${item.id}-tooltip`)
+      if (containerEl) {
+        window.$tooltip?.$destroy()
+      }
+      else {
+        containerEl = document.createElement('div')
+        containerEl.id = `${item.id}-tooltip`
+      }
+
+      window.$tooltip = new EventItem({
+        target: containerEl,
+        props: { item },
+      })
+
+      return containerEl.innerHTML
     },
-  ],
-  items: [
-    {
-      id: 2,
-      group: 0,
-      content: 'item 2',
-      start: '2014-04-14',
-    },
-    {
-      id: 3,
-      group: 0,
-      content: 'item 3',
-      start: '2014-04-18',
-    },
-    {
-      id: 1,
-      group: 0,
-      content: 'item 1',
-      start: '2014-04-20',
-    },
-    {
-      id: 4,
-      group: 0,
-      content: 'item 4',
-      start: '2014-04-16',
-      end: '2014-04-19',
-    },
-    {
-      id: 5,
-      group: 0,
-      content: 'item 5',
-      start: '2014-04-25',
-    },
-    {
-      id: 6,
-      group: 0,
-      content: 'item 6',
-      start: '2014-04-27',
-      type: 'point',
-    },
-  ],
-  options: {
-    editable: true,
+  },
+  onAdd: (item, callback) => {
+    const alert = window.prompt('Add event', item.content)
+    item.content = alert!
+    callback(item)
+  },
+  onMove: (item, callback) => {
+    const confirm = window.confirm('Confirm move')
+    callback(confirm ? item : null)
+  },
+  onRemove(item, callback) {
+    const confirm = window.confirm('Confirm remove')
+    callback(confirm ? item : null)
   },
 })
-
-function timelineWithoutGroupsEvent(eventName: string) {
-  if (timelineWithoutGroupsEvents.value.length > 500) timelineWithoutGroupsEvents.value = ''
-  timelineWithoutGroupsEvents.value += `${eventName}, `
-}
-
-function timelineEvent(eventName: string) {
-  if (timelineEvents.value.length > 500) timelineEvents.value = ''
-  timelineEvents.value += `${eventName}, `
-}
 
 </script>
 
 <template>
-  <h2>Timeline (without groups)</h2>
+  <h2>Timeline</h2>
   <Timeline
-    ref="timeline-withoutGroups"
-    :items="timeline.items"
-    :options="timeline.options"
-    @click="timelineWithoutGroupsEvent('click')"
-    @contextmenu="timelineWithoutGroupsEvent('contextmenu')"
-    @current-time-tick="timelineWithoutGroupsEvent('currentTimeTick')"
-    @double-click="timelineWithoutGroupsEvent('doubleClick')"
-    @drop="timelineWithoutGroupsEvent('drop')"
-    @mouse-over="timelineWithoutGroupsEvent('mouseOver')"
-    @mouse-down="timelineWithoutGroupsEvent('mouseDown')"
-    @mouse-up="timelineWithoutGroupsEvent('mouseUp')"
-    @mouse-move="timelineWithoutGroupsEvent('mouseMove')"
-    @group-dragged="timelineWithoutGroupsEvent('groupDragged')"
-    @changed="timelineWithoutGroupsEvent('changed')"
-    @rangechange="timelineWithoutGroupsEvent('rangechange')"
-    @rangechanged="timelineWithoutGroupsEvent('rangechanged')"
-    @select="timelineWithoutGroupsEvent('select')"
-    @itemover="timelineWithoutGroupsEvent('itemover')"
-    @itemout="timelineWithoutGroupsEvent('itemout')"
-    @timechange="timelineWithoutGroupsEvent('timechange')"
-    @timechanged="timelineWithoutGroupsEvent('timechanged')"
-    @items-mounted="timelineWithoutGroupsEvent('items-mounted')"
-    @items-add="timelineWithoutGroupsEvent('items-add')"
-    @items-update="timelineWithoutGroupsEvent('items-update')"
-    @items-remove="timelineWithoutGroupsEvent('items-remove')"
-  />
-
-  <div class="events">
-    <p>
-      Timeline events: <br>
-      {{ timelineWithoutGroupsEvents }}
-    </p>
-  </div>
-  <h2>Timeline (with groups)</h2>
-  <timeline
     ref="timeline"
-    :items="timeline.items"
-    :groups="timeline.groups"
-    :options="timeline.options"
-    @click="timelineEvent('click')"
-    @contextmenu="timelineEvent('contextmenu')"
-    @current-time-tick="timelineEvent('currentTimeTick')"
-    @double-click="timelineEvent('doubleClick')"
-    @drop="timelineEvent('drop')"
-    @mouse-over="timelineEvent('mouseOver')"
-    @mouse-down="timelineEvent('mouseDown')"
-    @mouse-up="timelineEvent('mouseUp')"
-    @mouse-move="timelineEvent('mouseMove')"
-    @group-dragged="timelineEvent('groupDragged')"
-    @changed="timelineEvent('changed')"
-    @rangechange="timelineEvent('rangechange')"
-    @rangechanged="timelineEvent('rangechanged')"
-    @select="timelineEvent('select')"
-    @itemover="timelineEvent('itemover')"
-    @itemout="timelineEvent('itemout')"
-    @timechange="timelineEvent('timechange')"
-    @timechanged="timelineEvent('timechanged')"
-    @items-mounted="timelineEvent('items-mounted')"
-    @items-add="timelineEvent('items-add')"
-    @items-update="timelineEvent('items-update')"
-    @items-remove="timelineEvent('items-remove')"
-    @groups-mounted="timelineEvent('groups-mounted')"
-    @groups-add="timelineEvent('groups-add')"
-    @groups-update="timelineEvent('groups-update')"
-    @groups-remove="timelineEvent('groups-remove')"
+    v-model:items="items"
+    v-model:groups="groups"
+    :options="options"
   />
-  <div class="events">
-    <p>
-      Timeline events: <br>
-      {{ timelineEvents }}
-    </p>
-  </div>
-  <hr>
 </template>

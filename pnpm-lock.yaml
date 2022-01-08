@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@antfu/eslint-config': ^0.15.0
   '@egjs/hammerjs': ^2.0.17
+  '@sveltejs/vite-plugin-svelte': ^1.0.0-next.34
   '@vitejs/plugin-vue': ^2.0.1
   '@vueuse/core': ^7.5.3
   component-emitter: ^1.3.0
@@ -10,6 +11,7 @@ specifiers:
   keycharm: ^0.4.0
   moment: ^2.29.1
   propagating-hammerjs: ^2.0.1
+  svelte: ^3.45.0
   typescript: ^4.5.4
   unplugin-auto-import: ^0.5.5
   uuid: ^8.3.2
@@ -37,8 +39,10 @@ dependencies:
 
 devDependencies:
   '@antfu/eslint-config': 0.15.0_eslint@8.6.0+typescript@4.5.4
+  '@sveltejs/vite-plugin-svelte': 1.0.0-next.34_svelte@3.45.0+vite@2.7.10
   '@vitejs/plugin-vue': 2.0.1_vite@2.7.10+vue@3.2.26
   eslint: 8.6.0
+  svelte: 3.45.0
   typescript: 4.5.4
   unplugin-auto-import: 0.5.5_@vueuse+core@7.5.3+vite@2.7.10
   vite: 2.7.10
@@ -257,6 +261,29 @@ packages:
     dependencies:
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    dev: true
+
+  /@sveltejs/vite-plugin-svelte/1.0.0-next.34_svelte@3.45.0+vite@2.7.10:
+    resolution: {integrity: sha512-qZH2jndijrdkvevgbO7OH3iQsviM5Kz7h5APiNP4yEMZTrwq9bifzYvco6BprwtPvLb5wYlRVFZUOdusY6AovQ==}
+    engines: {node: ^14.13.1 || >= 16}
+    peerDependencies:
+      diff-match-patch: ^1.0.5
+      svelte: ^3.44.0
+      vite: ^2.7.0
+    peerDependenciesMeta:
+      diff-match-patch:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 4.1.2
+      debug: 4.3.3
+      kleur: 4.1.4
+      magic-string: 0.25.7
+      require-relative: 0.8.7
+      svelte: 3.45.0
+      svelte-hmr: 0.14.9_svelte@3.45.0
+      vite: 2.7.10
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@types/hammerjs/2.0.41:
@@ -1912,6 +1939,11 @@ packages:
     resolution: {integrity: sha512-TyQTtsabOVv3MeOpR92sIKk/br9wxS+zGj4BG7CR8YbK4jM3tyIBaF0zhzeBUMx36/Q/iQLOKKOT+3jOQtemRQ==}
     dev: false
 
+  /kleur/4.1.4:
+    resolution: {integrity: sha512-8QADVssbrFjivHWQU7KkMgptGTl6WAcSdlbBPY4uNF+mWr6DGcKrvY2w4FQJoXch7+fKMjj0dRrL75vk3k23OA==}
+    engines: {node: '>=6'}
+    dev: true
+
   /levn/0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
@@ -2391,6 +2423,10 @@ packages:
     resolution: {integrity: sha512-i/wKzvcx7Er8tZnvqSxWuNO5ZGggu2UgZAqj/RyZ0si7lBTXL7kZiI/dWxzxnQjaY7s5HEy1qK21Do4Ncr6cVw==}
     dev: true
 
+  /require-relative/0.8.7:
+    resolution: {integrity: sha1-eZlTn8ngR6N5KPoZb44VY9q9Nt4=}
+    dev: true
+
   /resolve-from/4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
     engines: {node: '>=4'}
@@ -2588,6 +2624,19 @@ packages:
   /supports-preserve-symlinks-flag/1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+    dev: true
+
+  /svelte-hmr/0.14.9_svelte@3.45.0:
+    resolution: {integrity: sha512-bKE9+4qb4sAnA+TKHiYurUl970rjA0XmlP9TEP7K/ncyWz3m81kA4HOgmlZK/7irGK7gzZlaPDI3cmf8fp/+tg==}
+    peerDependencies:
+      svelte: '>=3.19.0'
+    dependencies:
+      svelte: 3.45.0
+    dev: true
+
+  /svelte/3.45.0:
+    resolution: {integrity: sha512-6AWftH2eqqKLYH1HvKpuUWe8OfjflarhegN57P/Cqwc2Rb2F5oIdDtANU/jMscyZMzG0v6nTQox0siZR9cmRVQ==}
+    engines: {node: '>= 8'}
     dev: true
 
   /text-table/0.2.0:

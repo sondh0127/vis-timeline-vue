@@ -1,11 +1,27 @@
-# Vue 3 + Typescript + Vite
+## Timeline TODO
+10 days
+learning visjs basic example
+dataset | group | item | options
+https://visjs.github.io/vis-timeline/docs/timeline/
+https://visjs.github.io/vis-timeline/examples/timeline/
 
-This template should help get you started developing with Vue 3 and Typescript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+- build time-line (2d)
+sync data items
+sync data groups
+set max-zoom: 1 day
+set min-zoom: a minute
+scroll to current time
 
-## Recommended IDE Setup
+- build channel timeline (2d)
+event timeline(crud) | program timeline(display)
+date picker
+next/prev day
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+ - integrate
+crud item: (1d)
+crud group(modal): (1d)
+crud with API (2d)
 
-## Type Support For `.vue` Imports in TS
-
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's `.vue` type support plugin by running `Volar: Switch TS Plugin on/off` from VSCode command palette.
+- TODO:
+learn some design from https://antoniandre.github.io/vue-cal/
+improve styling
