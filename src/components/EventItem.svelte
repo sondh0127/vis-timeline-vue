@@ -1,5 +1,7 @@
-<script>
-export let item
+<script lang="ts">
+import type {  DataItem } from 'vis-timeline/esnext'
+
+export let item: DataItem
 </script>
 
-<div>content</div>
+<div> {item.content} </div>

@@ -2,7 +2,7 @@
 import type { DataGroup, DataItem, TimelineOptions } from 'vis-timeline/esnext'
 import type { SvelteComponent } from 'svelte'
 import Timeline from './components/Timeline.vue'
-import EventTooltip from './components/EventTooltip.vue'
+import EventTooltip from './components/EventTooltip.svelte'
 import EventItem from './components/EventItem.svelte'
 
 const timeline = ref()
@@ -26,6 +26,16 @@ const options = ref<TimelineOptions>({
   zoomMax: 1000 * 60 * 60 * 24,
   itemsAlwaysDraggable: true,
   showCurrentTime: true,
+  start: (() => {
+    const date = new Date()
+    date.setHours(date.getHours() - 2)
+    return date
+  })(),
+  end: (() => {
+    const date = new Date()
+    date.setHours(date.getHours() + 2)
+    return date
+  })(),
   orientation: 'top',
   minHeight: '150px',
   maxHeight: '300px',
@@ -34,13 +44,15 @@ const options = ref<TimelineOptions>({
     offset: 0.5,
   },
   template: (item, element, data) => {
+    if (!item)
+      return ''
     let containerEl = document.getElementById(item.id)
     if (containerEl) {
       window.$apps.get(item.id)?.$destroy()
     }
     else {
       containerEl = document.createElement('div')
-      containerEl.id = item.id
+      containerEl.id = item?.id
     }
 
     window.$apps.set(item.id, new EventItem({
@@ -61,7 +73,7 @@ const options = ref<TimelineOptions>({
         containerEl.id = `${item.id}-tooltip`
       }
 
-      window.$tooltip = new EventItem({
+      window.$tooltip = new EventTooltip({
         target: containerEl,
         props: { item },
       })
@@ -71,8 +83,23 @@ const options = ref<TimelineOptions>({
   },
   onAdd: (item, callback) => {
     const alert = window.prompt('Add event', item.content)
-    item.content = alert!
-    callback(item)
+    if (alert) {
+      item.content = alert
+      callback(item)
+    }
+    else {
+      callback(null)
+    }
+  },
+  onUpdate: (item, callback) => {
+    const alert = window.prompt('Update event', item.content)
+    if (alert) {
+      item.content = alert
+      callback(item)
+    }
+    else {
+      callback(null)
+    }
   },
   onMove: (item, callback) => {
     const confirm = window.confirm('Confirm move')
