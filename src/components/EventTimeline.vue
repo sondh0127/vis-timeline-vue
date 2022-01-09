@@ -7,6 +7,7 @@ import type {
 } from 'vis-timeline/esnext'
 import { nanoid } from 'nanoid'
 import type { SvelteComponent } from 'svelte'
+import moment from 'moment'
 import EventTooltip from './EventTooltip.svelte'
 import EventItem from './EventItem.svelte'
 import EventGroup from './EventGroup.svelte'
@@ -236,15 +237,29 @@ function addGroup() {
     })
   }
 }
+const date = ref(moment().format('DD/MM/YYYY'))
+
+function onChangeDate(e) {
+  date.value = moment(e.target.value).format('DD/MM/YYYY')
+  timeline.value?.setWindow(moment(e.target.value).toDate(), moment(e.target.value).add(1, 'day').toDate())
+}
 
 </script>
 
 <template>
   <div ref="timelineRef">
-    <div class="absolute top-0 left-0 w-[100px] h-[60px] z-1 flex items-center p-2">
+    <div class="absolute top-0 left-0 w-[calc(150px-16px)] z-1 flex items-center justify-center p-2">
       <button class="text-[#4d4d4d]" @click="addGroup">
         Add group
       </button>
+    </div>
+
+    <div class="absolute top-0 right-0 w-[calc(200px-16px)] z-1 flex flex-col justify-center">
+      <label class="text-[#4d4d4d]" for="start"> Select Date</label>
+      <input
+        id="start" type="date"
+        @change="onChangeDate"
+      >
     </div>
   </div>
 </template>

@@ -47,13 +47,16 @@ const options = ref<TimelineOptions>()
       <p>Group view: Scroll wheel</p>
       <p>Item view: Shift + wheel</p>
       <p>Zoom: Ctrll + scroll wheel (configurable: 1h - 1d)</p>
+      <p>Scroll to now: Right left button</p>
     </div>
   </div>
 
-  <EventTimeline
-    ref="eventTimelineRef"
-    v-model:items="items"
-    v-model:groups="groups"
-    :options="options"
-  />
+  <div class="p-10">
+    <EventTimeline
+      ref="eventTimelineRef"
+      v-model:items="items"
+      v-model:groups="groups"
+      :options="options"
+    />
+  </div>
 </template>

@@ -130,7 +130,7 @@
   height: 40px;
   width: 40px;
   position: absolute;
-  top: 7px;
+  bottom: 7px;
   right: 20px;
   border-radius: 50%;
   font-size: 28px;
@@ -175,6 +175,10 @@
 
 .vis-panel.vis-left {
   width: 150px;
+}
+
+.vis-panel.vis-right {
+  width: 200px;
 }
 
 .vis-left.vis-panel.vis-vertical-scroll, .vis-right.vis-panel.vis-vertical-scroll {
