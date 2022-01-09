@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import type { DataGroup, DataItem, TimelineOptions } from 'vis-timeline/esnext'
+import type { DataGroup, DataItem, DataSetDataGroup, DataSetDataItem, Timeline, TimelineOptions } from 'vis-timeline/esnext'
 import type { SvelteComponent } from 'svelte'
-import Timeline from './components/Timeline.vue'
+import EventTimeline from './components/EventTimeline.vue'
 import EventTooltip from './components/EventTooltip.svelte'
 import EventItem from './components/EventItem.svelte'
+import EventGroup from './components/EventGroup.svelte'
 
-const timeline = ref()
+interface TimelineExpose {
+  timeline: Timeline
+  dataSetItems: DataSetDataItem
+  dataSetGroups: DataSetDataGroup
+}
 
-const groups = useStorage<DataGroup[]>('__GROUPS__', [
-  {
-    id: 0,
-    content: 'Group 1',
-  },
-])
+const eventTimelineRef = ref<TimelineExpose>()
 
+const groups = useStorage<DataGroup[]>('__GROUPS__', [])
+
+// TODO: remove items app on delete
 const items = useStorage<DataItem[]>('__ITEMS__', [])
-window.$apps = new Map<string, SvelteComponent>()
+
+const groupsApp = ref<Record<string, SvelteComponent>>({})
+const itemsApp = ref<Record<string, SvelteComponent>>({})
+const tooltipApp = ref<SvelteComponent>()
 
 const options = ref<TimelineOptions>({
   editable: true,
@@ -46,34 +52,36 @@ const options = ref<TimelineOptions>({
   template: (item, element, data) => {
     if (!item)
       return ''
-    let containerEl = document.getElementById(item.id)
+    const id = `item-${item.id}`
+    let containerEl = document.getElementById(id)
     if (containerEl) {
-      window.$apps.get(item.id)?.$destroy()
+      itemsApp.value[item.id]?.$destroy()
     }
     else {
       containerEl = document.createElement('div')
-      containerEl.id = item?.id
+      containerEl.id = id
     }
 
-    window.$apps.set(item.id, new EventItem({
+    itemsApp.value[item.id] = new EventItem({
       target: containerEl,
       props: { item },
-    }))
+    })
 
     return containerEl
   },
   tooltipOnItemUpdateTime: {
     template(item) {
-      let containerEl = document.getElementById(`${item.id}-tooltip`)
+      const id = `tooltip-${item.id}`
+      let containerEl = document.getElementById(id)
       if (containerEl) {
-        window.$tooltip?.$destroy()
+        tooltipApp.value?.$destroy()
       }
       else {
         containerEl = document.createElement('div')
-        containerEl.id = `${item.id}-tooltip`
+        containerEl.id = id
       }
 
-      window.$tooltip = new EventTooltip({
+      tooltipApp.value = new EventTooltip({
         target: containerEl,
         props: { item },
       })
@@ -109,14 +117,52 @@ const options = ref<TimelineOptions>({
     const confirm = window.confirm('Confirm remove')
     callback(confirm ? item : null)
   },
+  // groupEditable: true,
+  groupTemplate(group) {
+    if (!group)
+      return ''
+    const id = `group-${group.id}`
+    let containerEl = document.getElementById(id)
+    if (containerEl) {
+      groupsApp.value[group.id]?.$destroy()
+    }
+    else {
+      containerEl = document.createElement('div')
+      containerEl.id = id
+    }
+
+    const app = new EventGroup({
+      target: containerEl,
+      props: { group },
+    })
+
+    app.$on('remove', (e) => {
+      const group = e.detail
+      eventTimelineRef.value?.dataSetGroups.remove(group.id)
+    })
+
+    app.$on('update', (e) => {
+      const group = e.detail
+      const prompt = window.prompt('Update event', group.content)
+
+      if (prompt) {
+        group.content = prompt
+        eventTimelineRef.value?.dataSetGroups.updateOnly(group)
+      }
+    })
+
+    groupsApp.value[group.id] = app
+
+    return containerEl
+  },
 })
 
 </script>
 
 <template>
   <h2>Timeline</h2>
-  <Timeline
-    ref="timeline"
+  <EventTimeline
+    ref="eventTimelineRef"
     v-model:items="items"
     v-model:groups="groups"
     :options="options"

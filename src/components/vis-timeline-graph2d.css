@@ -155,7 +155,6 @@
   margin: 0;
 
   box-sizing: border-box;
-  width: 100px
 }
 
 .vis-panel.vis-center,
@@ -172,6 +171,10 @@
   border-top-style: solid;
   border-bottom-style: solid;
   overflow: hidden;
+}
+
+.vis-panel.vis-left {
+  width: 150px;
 }
 
 .vis-left.vis-panel.vis-vertical-scroll, .vis-right.vis-panel.vis-vertical-scroll {
