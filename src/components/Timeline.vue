@@ -3,10 +3,9 @@ import './vis-timeline-graph2d.css'
 import { DataSet } from 'vis-data'
 import { Timeline } from 'vis-timeline/esnext'
 import type {
-  DataGroup, DataInterfaceDataGroup, DataInterfaceDataItem,
-  DataItem, IdType, TimelineEvents,
-  TimelineOptions,
+  DataGroup, DataItem, IdType, TimelineEvents, TimelineOptions,
 } from 'vis-timeline/esnext'
+import { nanoid } from 'nanoid'
 
 interface Props {
   groups?: DataGroup[]
@@ -32,8 +31,8 @@ const timeline = ref<Timeline>()
 const itemsValue = useVModel(props, 'items', emit)
 const groupsValue = useVModel(props, 'groups', emit)
 
-const dataSetItems = ref<DataInterfaceDataItem>(new DataSet(props.items))
-const dataSetGroups = ref<DataInterfaceDataGroup>(new DataSet(props.groups))
+const dataSetItems = ref(new DataSet(props.items))
+const dataSetGroups = ref(new DataSet(props.groups))
 
 /** maybe watch individual event to improve performance */
 dataSetItems.value.on('*', (name, payload, senderId) => {
@@ -70,8 +69,20 @@ defineExpose({
   dataSetGroups,
 })
 
+function addGroup() {
+  const prompt = window.prompt('Add group', 'New group')
+  if (prompt)
+    dataSetGroups.value.add({ id: nanoid(), content: prompt })
+}
+
 </script>
 
 <template>
-  <div ref="timelineRef" />
+  <div ref="timelineRef">
+    <div class="absolute top-0 left-0 w-[100px] h-[60px] z-1 flex items-center p-2">
+      <button class="text-[#4d4d4d]" @click="addGroup">
+        Add group
+      </button>
+    </div>
+  </div>
 </template>

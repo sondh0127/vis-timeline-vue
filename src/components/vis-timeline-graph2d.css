@@ -155,6 +155,7 @@
   margin: 0;
 
   box-sizing: border-box;
+  width: 100px
 }
 
 .vis-panel.vis-center,
@@ -177,7 +178,7 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
-} 
+}
 
 .vis-left.vis-panel.vis-vertical-scroll {
   direction: rtl;

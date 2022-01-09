@@ -4,4 +4,4 @@ import type {  DataItem } from 'vis-timeline/esnext'
 export let item: DataItem
 </script>
 
-<div> {item.content} </div>
+<div class="select-none"> {item.content} </div>

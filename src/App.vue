@@ -24,7 +24,7 @@ const options = ref<TimelineOptions>({
   horizontalScroll: true,
   zoomMin: 1000 * 60 * 60,
   zoomMax: 1000 * 60 * 60 * 24,
-  itemsAlwaysDraggable: true,
+  // itemsAlwaysDraggable: true,
   showCurrentTime: true,
   start: (() => {
     const date = new Date()
