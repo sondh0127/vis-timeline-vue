@@ -239,7 +239,7 @@ function addGroup() {
 }
 const date = ref(moment().format('DD/MM/YYYY'))
 
-function onChangeDate(e) {
+function onChangeDate(e: any) {
   date.value = moment(e.target.value).format('DD/MM/YYYY')
   timeline.value?.setWindow(moment(e.target.value).toDate(), moment(e.target.value).add(1, 'day').toDate())
 }
