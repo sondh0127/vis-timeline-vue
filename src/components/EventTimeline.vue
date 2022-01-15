@@ -6,11 +6,11 @@ import type {
   DataGroup, DataItem, IdType, TimelineEvents, TimelineOptions,
 } from 'vis-timeline/esnext'
 import { nanoid } from 'nanoid'
-import type { SvelteComponent } from 'svelte'
 import moment from 'moment'
-import EventTooltip from './EventTooltip.svelte'
-import EventItem from './EventItem.svelte'
-import EventGroup from './EventGroup.svelte'
+import { createVNode, render } from 'vue'
+import EventTooltip from './EventTooltip.vue'
+import EventGroup from './EventGroup.vue'
+import EventItem from './EventItem.vue'
 
 interface Props {
   groups?: DataGroup[]
@@ -39,15 +39,16 @@ const groupsValue = useVModel(props, 'groups', emit)
 const dataSetItems = ref(new DataSet(props.items))
 const dataSetGroups = ref(new DataSet(props.groups))
 
-const groupsApp = ref<Record<string, SvelteComponent>>({})
-const itemsApp = ref<Record<string, SvelteComponent>>({})
-const tooltipApp = ref<SvelteComponent>()
+const groupsApp = ref<Record<string, any>>({})
+const itemsApp = ref<Record<string, any>>({})
+const tooltipApp = ref<any>()
 
 const options = ref<TimelineOptions>({
   editable: true,
   zoomKey: 'ctrlKey',
   align: 'center',
   horizontalScroll: true,
+  stack: false,
   verticalScroll: true,
   zoomMin: 1000 * 60 * 60,
   zoomMax: 1000 * 60 * 60 * 24,
@@ -73,41 +74,45 @@ const options = ref<TimelineOptions>({
   template: (item, element, data) => {
     if (!item)
       return ''
-    const id = `item-${item.id}`
-    let containerEl = document.getElementById(id)
-    if (containerEl) {
-      itemsApp.value[item.id]?.$destroy()
-    }
-    else {
-      containerEl = document.createElement('div')
-      containerEl.id = id
-    }
+    // const id = `item-${item.id}`
+    // let containerEl = document.getElementById(id)
+    // if (containerEl) {
+    //   itemsApp.value[item.id]?.$destroy()
+    // }
+    // else {
+    //   containerEl = document.createElement('div')
+    //   containerEl.id = id
+    // }
+    const container = document.createElement('div')
+    const vnode = createVNode(EventItem, { item })
+    render(vnode, container)
 
-    itemsApp.value[item.id] = new EventItem({
-      target: containerEl,
-      props: { item },
-    })
-
-    return containerEl
+    return container
   },
   tooltipOnItemUpdateTime: {
     template(item) {
-      const id = `tooltip-${item.id}`
-      let containerEl = document.getElementById(id)
-      if (containerEl) {
-        tooltipApp.value?.$destroy()
-      }
-      else {
-        containerEl = document.createElement('div')
-        containerEl.id = id
-      }
+      // const id = `tooltip-${item.id}`
+      // let containerEl = document.getElementById(id)
+      // if (containerEl) {
+      //   tooltipApp.value?.$destroy()
+      // }
+      // else {
+      //   containerEl = document.createElement('div')
+      //   containerEl.id = id
+      // }
 
-      tooltipApp.value = new EventTooltip({
-        target: containerEl,
-        props: { item },
-      })
+      // tooltipApp.value = new EventTooltip({
+      //   target: containerEl,
+      //   props: { item },
+      // })
 
-      return containerEl.innerHTML
+      const container = document.createElement('div')
+      const vnode = createVNode(EventTooltip, { item })
+      render(vnode, container)
+
+      return container.innerHTML
+
+      // return containerEl.innerHTML
     },
   },
   onAdd: (item, callback) => {
@@ -150,41 +155,47 @@ const options = ref<TimelineOptions>({
   groupTemplate: (group) => {
     if (!group)
       return ''
-    const id = `group-${group.id}`
-    let containerEl = document.getElementById(id)
-    if (containerEl) {
-      groupsApp.value[group.id]?.$destroy()
-    }
-    else {
-      containerEl = document.createElement('div')
-      containerEl.id = id
-    }
+    // const id = `group-${group.id}`
+    // let containerEl = document.getElementById(id)
+    // if (containerEl) {
+    //   groupsApp.value[group.id]?.$destroy()
+    // }
+    // else {
+    //   containerEl = document.createElement('div')
+    //   containerEl.id = id
+    // }
 
-    const app = new EventGroup({
-      target: containerEl,
-      props: { group },
-    })
+    // const app = new EventGroup({
+    //   target: containerEl,
+    //   props: { group },
+    // })
 
-    app.$on('remove', (e) => {
-      const group = e.detail
-      const confirm = window.confirm('Confirm remove')
-      if (confirm)
-        dataSetGroups.value.remove(group.id)
-    })
+    const container = document.createElement('div')
+    const vnode = createVNode(EventGroup, { group })
+    render(vnode, container)
 
-    app.$on('update', (e) => {
-      const group = e.detail
-      const prompt = window.prompt('Update event', group.content)
+    return container
 
-      if (prompt) {
-        group.content = prompt
-        dataSetGroups.value.updateOnly(group)
-      }
-    })
+    // app.$on('remove', (e) => {
+    //   const group = e.detail
+    //   const confirm = window.confirm('Confirm remove')
+    //   if (confirm)
+    //     dataSetGroups.value.remove(group.id)
+    // })
 
-    groupsApp.value[group.id] = app
+    // app.$on('update', (e) => {
+    //   const group = e.detail
+    //   const prompt = window.prompt('Update event', group.content)
 
-    return containerEl
+    //   if (prompt) {
+    //     group.content = prompt
+    //     dataSetGroups.value.updateOnly(group)
+    //   }
+    // })
+
+    // groupsApp.value[group.id] = app
+
+    // return containerEl
   },
 })
 
